@@ -4,7 +4,7 @@ Wiener Linien XBMC Addon
 
 Requirements
 ------------
-Tested on XBMC Eden/Frodo
+Tested on XBMC Frodo
 
 
 Supported platforms
@@ -14,19 +14,9 @@ Windows, Linux , Android and OSX
 
 Current Features
 ----------------
-* 
-
-
-Missing Features
-----------------
-* 
-
-
-Known Issues
-------------
-* 
-
-
-Legal
------
+* Access Live data from open.wien.at
+* List Stations
+* Search by Stations
+* Favourites
+* Show Failures
 
