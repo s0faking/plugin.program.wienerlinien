@@ -1,4 +1,32 @@
-plugin.program.wienerlinien
-===========================
+Wiener Linien XBMC Addon
+=======
 
-Wiener Linien XBMC Addon using Open Wien Data
+
+Requirements
+------------
+Tested on XBMC Eden/Frodo
+
+
+Supported platforms
+-------------------
+Windows, Linux , Android and OSX
+
+
+Current Features
+----------------
+* 
+
+
+Missing Features
+----------------
+* 
+
+
+Known Issues
+------------
+* 
+
+
+Legal
+-----
+
