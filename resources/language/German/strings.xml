@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <string id="40000">Station Suchen</string>
+    <string id="40001">Favoriten</string>
+    <string id="40002">Monitor</string>
+    <string id="40003">Störungen</string>
+    <string id="40004">Es sind keine Echtzeitdaten vorhanden</string>
+    <string id="40005">Suchen ...</string>
+    <string id="40006">--- Aktualisieren ---</string>
+	<string id="40007"># Stau in Zufahrt #</string>
+	<string id="40008">Kein Beschreibung verfügbar</string>
+    <string id="40009">Stau</string>
+    <string id="40010">Dauer</string>
+</strings>

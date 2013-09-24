@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <string id="40000">Search Stations</string>
+    <string id="40001">Favourites</string>
+    <string id="40002">Station Monitor</string>
+    <string id="40003">News</string>
+    <string id="40004">No realtime data available</string>
+    <string id="40005">Search ...</string>
+    <string id="40006">--- Refresh ---</string>
+    <string id="40007"># Trafic Jam #</string>
+    <string id="40008">No description available</string>
+    <string id="40009">Jam</string>
+    <string id="40010">Duration</string>
+</strings>

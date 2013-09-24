@@ -35,7 +35,7 @@ lines_url = "http://data.wien.gv.at/csv/wienerlinien-ogd-linien.csv"
 positions_url = "http://data.wien.gv.at/csv/wienerlinien-ogd-steige.csv"
 basepath = settings.getAddonInfo('path')
 resourcespath = os.path.join(settings.getAddonInfo('path'),"resources")
-
+translation = settings.getLocalizedString
 defaultbackdrop = os.path.join(basepath,"fanart.jpg")
 
 stationpath = os.path.join(resourcespath, "stations.csv")
@@ -49,10 +49,10 @@ urllib.urlretrieve(positions_url, positionpath)
 
 
 def getMainMenu():
-    addDirectory("Station Suchen","Hier kannst du nach einer Station suchen","searchStation")
-    addDirectory("Favoriten","Hier kannst du schnell auf deine Favoriten zugreifen. Benutze das Kontextmenü um Stationen zu deinen Favoriten hinzuzufügen.","getFavorites")
-    addDirectory("Monitor","Hier kannst du auf die Monitordaten der Stationen zugreifen","getMonitor")
-    addDirectory("Störungen","Hier werden gegebenenfalls Störungen angezeigt","getFailures")
+    addDirectory(translation(40000),"","searchStation")
+    addDirectory(translation(40001),"","getFavorites")
+    addDirectory(translation(40002),"","getMonitor")
+    addDirectory(translation(40003),"","getFailures")
     xbmcplugin.setContent(pluginhandle,'episodes')
     xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -106,16 +106,16 @@ def getStationPositions(haltestellen_id):
             else:
                 rbl_str += "rbl=%s&" % rbl
     if rbl_str != '':
-        json_url = "http://www.wienerlinien.at/ogd_realtime/monitor?%ssender=5L88jCE2ts" % rbl_str
+        json_url = "http://www.wienerlinien.at/ogd_realtime/monitor?%ssender=Bb6juvg7Qe" % rbl_str
         getJsonMessage(json_url)
     else:
         notFound()
     
 
 def notFound():
-    parameters = {"title" : "Es sind keine Echtzeitdaten vorhanden","mode" : "notFound"}
+    parameters = {"title" : translation(40004),"mode" : "notFound"}
     u = sys.argv[0] + '?' + urllib.urlencode(parameters)
-    liz=xbmcgui.ListItem("Es sind keine Echtzeitdaten vorhanden",iconImage=os.path.join(basepath,"icon.png"))
+    liz=xbmcgui.ListItem(translation(40004),iconImage=os.path.join(basepath,"icon.png"))
     liz.setProperty('IsPlayable', 'false')
     xbmcplugin.addDirectoryItem(handle=pluginhandle,url=u,listitem=liz,isFolder=True)
     xbmcplugin.setContent(pluginhandle,'episodes')
@@ -123,7 +123,7 @@ def notFound():
     xbmcplugin.endOfDirectory(pluginhandle)
 
 def searchStation():
-    addDirectory("Suchen ...","","searchStationResult")
+    addDirectory(translation(40005),"","searchStationResult")
     cache.table_name = "searchhistory"
     some_dict = cache.get("searches").split("|")
     for str in reversed(some_dict):
@@ -152,9 +152,9 @@ def findStationDuplicate(list,id):
 def getJsonMessage(url):
     url = urllib.unquote_plus(url)
     print "URL:%s" % url
-    parameters = {"title" : " --- Aktualisieren --","mode" : "refreshStations" , "id" : url}
+    parameters = {"title" : translation(40006),"mode" : "refreshStations" , "id" : url}
     u = sys.argv[0] + '?' + urllib.urlencode(parameters)
-    liz=xbmcgui.ListItem(label=" --- Aktualisieren --", label2="",iconImage=os.path.join(basepath,"icon.png"))
+    liz=xbmcgui.ListItem(label=translation(40006), label2="",iconImage=os.path.join(basepath,"icon.png"))
     liz.setProperty('IsPlayable', 'false')
     xbmcplugin.addDirectoryItem(handle=pluginhandle,url=u,listitem=liz,isFolder=True)
     json_response = urllib2.urlopen(url).read()
@@ -168,7 +168,7 @@ def getJsonMessage(url):
             name = row['name']
             towards = row['towards']
             if row['trafficjam']:
-                jam_str = "# Stau in Zufahrt #"
+                jam_str = translation(40007)
             title = "%s | %s | %s | %s" % (name.encode('utf-8'),towards.encode('utf-8'),departure_str,jam_str)
             parameters = {"title" : title,"mode" : "refreshStations","id": url}
             u = sys.argv[0] + '?' + urllib.urlencode(parameters)
@@ -183,7 +183,7 @@ def getFavorites():
     xbmc.executebuiltin('XBMC.ActivateWindow(favourites)')
 	
 def getJsonFailureMessage():
-    url = "http://www.wienerlinien.at/ogd_realtime/trafficInfoList?sender=5L88jCE2ts"
+    url = "http://www.wienerlinien.at/ogd_realtime/trafficInfoList?sender=Bb6juvg7Qe"
     dictReader = csv.DictReader(open(positionpath, 'rb'), fieldnames = ['STEIG_ID', 'FK_LINIEN_ID','FK_HALTESTELLEN_ID', 'RICHTUNG', 'REIHENFOLGE', 'RBL_NUMMER','BEREICH','STEIG', 'STEIG_WGS84_LAT', 'STEIG_WGS84_LON', 'STAND'], delimiter = ';', quotechar = '"')
     json_response = urllib2.urlopen(url).read()
     json_dict = json.loads(json_response)
@@ -195,7 +195,7 @@ def getJsonFailureMessage():
             try:
                 desc = column["description"].encode('utf-8')
             except:
-                desc = "Kein Beschreibung verfügbar"
+                desc = translation(40008)
             try:
                 reason = column['attributes']["reason"].encode('utf-8')
                 desc += "| %s |" % reason
@@ -209,7 +209,6 @@ def getJsonFailureMessage():
             except:
                 try:
                     for line in column["relatedLines"]:
-                        print "RELATED LINE"
                         desc += " [Linie %s] " % line
                 except:
                     print ''
@@ -232,14 +231,14 @@ def getJsonFailureMessage():
                 station = ''
             try:
                 status = column['attributes']["status"].encode('utf-8')
-                desc += "| Staus: %s |" % status
+                desc += "| %s: %s |" % (translation(40009),status)
             except:
                  status = ''
             try:
                 duration = "%s bis &s" % (column['attributes']["ausVon"].encode('utf-8'),column['attributes']["ausBis"].encode('utf-8')) 
-                desc += "| Dauer: %s |" % duration
+                desc += "| %s: %s |" % (translation(40010),duration)
             except:
-                duration = "kein Angabe zur Dauer" 
+                duration = "" 
             print title
             print desc
             print "############################################################" 
