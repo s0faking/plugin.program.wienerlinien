@@ -34,10 +34,13 @@ stations_url = "http://data.wien.gv.at/csv/wienerlinien-ogd-haltestellen.csv"
 lines_url = "http://data.wien.gv.at/csv/wienerlinien-ogd-linien.csv"
 positions_url = "http://data.wien.gv.at/csv/wienerlinien-ogd-steige.csv"
 basepath = settings.getAddonInfo('path')
-resourcespath = os.path.join(settings.getAddonInfo('path'),"resources")
+
+resourcespath = xbmc.translatePath( settings.getAddonInfo('profile')).decode("utf-8")
+if not os.path.exists(os.path.dirname(resourcespath)):
+    os.makedirs(os.path.dirname(resourcespath))
+
 translation = settings.getLocalizedString
 defaultbackdrop = os.path.join(basepath,"fanart.jpg")
-
 stationpath = os.path.join(resourcespath, "stations.csv")
 linepath = os.path.join(resourcespath, "lines.csv")
 positionpath = os.path.join(resourcespath, "positions.csv")
@@ -49,10 +52,10 @@ urllib.urlretrieve(positions_url, positionpath)
 
 
 def getMainMenu():
-    addDirectory(translation(40000),"","searchStation")
-    addDirectory(translation(40001),"","getFavorites")
-    addDirectory(translation(40002),"","getMonitor")
-    addDirectory(translation(40003),"","getFailures")
+    addDirectory(translation(30000),"","searchStation")
+    addDirectory(translation(30001),"","getFavorites")
+    addDirectory(translation(30002),"","getMonitor")
+    addDirectory(translation(30003),"","getFailures")
     xbmcplugin.setContent(pluginhandle,'episodes')
     xbmcplugin.endOfDirectory(pluginhandle)
 
@@ -113,9 +116,9 @@ def getStationPositions(haltestellen_id):
     
 
 def notFound():
-    parameters = {"title" : translation(40004),"mode" : "notFound"}
+    parameters = {"title" : translation(30004),"mode" : "notFound"}
     u = sys.argv[0] + '?' + urllib.urlencode(parameters)
-    liz=xbmcgui.ListItem(translation(40004),iconImage=os.path.join(basepath,"icon.png"))
+    liz=xbmcgui.ListItem(translation(30004),iconImage=os.path.join(basepath,"icon.png"))
     liz.setProperty('IsPlayable', 'false')
     xbmcplugin.addDirectoryItem(handle=pluginhandle,url=u,listitem=liz,isFolder=True)
     xbmcplugin.setContent(pluginhandle,'episodes')
@@ -123,11 +126,12 @@ def notFound():
     xbmcplugin.endOfDirectory(pluginhandle)
 
 def searchStation():
-    addDirectory(translation(40005),"","searchStationResult")
+    addDirectory(translation(30005),"","searchStationResult")
     cache.table_name = "searchhistory"
     some_dict = cache.get("searches").split("|")
     for str in reversed(some_dict):
-        addDirectory(str,"","searchStationHistory",str)
+        if str != '':
+            addDirectory(str,"","searchStationHistory",str)
     xbmcplugin.setContent(pluginhandle,'episodes')
     xbmcplugin.endOfDirectory(pluginhandle)
 	
@@ -152,9 +156,9 @@ def findStationDuplicate(list,id):
 def getJsonMessage(url):
     url = urllib.unquote_plus(url)
     print "URL:%s" % url
-    parameters = {"title" : translation(40006),"mode" : "refreshStations" , "id" : url}
+    parameters = {"title" : translation(30006),"mode" : "refreshStations" , "id" : url}
     u = sys.argv[0] + '?' + urllib.urlencode(parameters)
-    liz=xbmcgui.ListItem(label=translation(40006), label2="",iconImage=os.path.join(basepath,"icon.png"))
+    liz=xbmcgui.ListItem(label=translation(30006), label2="",iconImage=os.path.join(basepath,"icon.png"))
     liz.setProperty('IsPlayable', 'false')
     xbmcplugin.addDirectoryItem(handle=pluginhandle,url=u,listitem=liz,isFolder=True)
     json_response = urllib2.urlopen(url).read()
@@ -168,7 +172,7 @@ def getJsonMessage(url):
             name = row['name']
             towards = row['towards']
             if row['trafficjam']:
-                jam_str = translation(40007)
+                jam_str = translation(30007)
             title = "%s | %s | %s | %s" % (name.encode('utf-8'),towards.encode('utf-8'),departure_str,jam_str)
             parameters = {"title" : title,"mode" : "refreshStations","id": url}
             u = sys.argv[0] + '?' + urllib.urlencode(parameters)
@@ -188,19 +192,20 @@ def getJsonFailureMessage():
     json_response = urllib2.urlopen(url).read()
     json_dict = json.loads(json_response)
     for column in json_dict['data']['trafficInfos']:
+            desc = ' | '
             try:
                 title = column["title"].replace("\n"," | ").encode('utf-8')
             except:
                 title = ''
             try:
-                desc = column["description"].encode('utf-8')
+                desc += column["description"].encode('utf-8')
             except:
-                desc = translation(40008)
+                desc += translation(30008)
             try:
                 reason = column['attributes']["reason"].encode('utf-8')
                 desc += "| %s |" % reason
             except:
-                print ''
+                pass
             relatedlines = ''
             try:
                 for line in column['attributes']["relatedLines"]:
@@ -211,19 +216,7 @@ def getJsonFailureMessage():
                     for line in column["relatedLines"]:
                         desc += " [Linie %s] " % line
                 except:
-                    print ''
-            relatedStops = ''
-            try:
-                for related in column['attributes']["relatedStops"]:
-                    relatedStops += "[%s] " % line
-                #desc += "| %s |" % relatedStops
-            except:
-                try:
-                    for stops in column["relatedStops"]:
-                        relatedStops += "[%s] " % stops
-                    #desc += "| %s |" % relatedStops
-                except:
-                    print ''
+                    pass
             try:
                 station = column['attributes']["station"].encode('utf-8')
                 desc += "[ %s ]" % station
@@ -231,17 +224,15 @@ def getJsonFailureMessage():
                 station = ''
             try:
                 status = column['attributes']["status"].encode('utf-8')
-                desc += "| %s: %s |" % (translation(40009),status)
+                desc += "| %s: %s |" % (translation(30009),status)
             except:
                  status = ''
             try:
                 duration = "%s bis &s" % (column['attributes']["ausVon"].encode('utf-8'),column['attributes']["ausBis"].encode('utf-8')) 
-                desc += "| %s: %s |" % (translation(40010),duration)
+                desc += "| %s: %s |" % (translation(30010),duration)
             except:
                 duration = "" 
-            print title
-            print desc
-            print "############################################################" 
+            title += desc.replace("\n"," | ")
             parameters = {"title" : title,"mode" : "getFailures"}
             u = sys.argv[0] + '?' + urllib.urlencode(parameters)
             liz2=xbmcgui.ListItem(label=title, label2=desc,iconImage=os.path.join(basepath,"icon.png"))
