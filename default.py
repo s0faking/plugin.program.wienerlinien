@@ -165,6 +165,7 @@ def getJsonMessage(url):
     json_dict = json.loads(json_response)
     for column in json_dict['data']['monitors']:
         for row in column['lines']:
+          try:
             departure_str = ""
             jam_str = ""
             for departures in row['departures']['departure']:
@@ -179,6 +180,8 @@ def getJsonMessage(url):
             liz=xbmcgui.ListItem(label=title, label2=departure_str,iconImage=os.path.join(basepath,"icon.png"))
             liz.setProperty('IsPlayable', 'false')
             xbmcplugin.addDirectoryItem(handle=pluginhandle,url=u,listitem=liz,isFolder=True)
+          except:
+            pass
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.endOfDirectory(pluginhandle)
 
