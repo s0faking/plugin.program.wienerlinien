@@ -15,6 +15,8 @@
         <description lang="de">Wiener Linien - Fahrplanabfrage</description>
         <description lang="en">Wiener Linien - Vienna Public Transportation Schedule"</description>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <forum>http://forum.kodi.tv/showthread.php?tid=174662</forum>
         <email>sofaking@gettingmoney.at</email>
+        <source>https://github.com/s0faking/plugin.program.wienerlinien</source>
     </extension>
 </addon>
